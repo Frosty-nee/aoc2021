@@ -68,13 +68,12 @@ def solve_p2(i):
             val.append(n)
 
         t=int(''.join(list(map(str, val))))
-        print(t)
         total += t
 
     return total
 
 if __name__ == '__main__':
-    with open('inputs/i8t') as f:
+    with open('inputs/i8') as f:
         i = [' '.join([sub.rstrip() for sub in [split for split in line.split(' | ')]]) for line in f.readlines()]
     #print(solve_p1(i))
     print(solve_p2(i))
