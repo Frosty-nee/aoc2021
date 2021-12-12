@@ -14,7 +14,7 @@ def solve(fd, days):
     return(sum([f for _, f in fd.items()]))
 
 if __name__ == '__main__':
-    with open('i6') as f:
+    with open('inputs/i6') as f:
         i = list(map(int, f.readline().split(',')))
     fish_dict = {}
     for day in range(9):

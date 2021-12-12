@@ -1,8 +1,5 @@
 #! python
 
-from os import error
-
-
 def solve_p1(i):
 
     counts = {x:0 for x in range(10)}
@@ -77,7 +74,7 @@ def solve_p2(i):
     return total
 
 if __name__ == '__main__':
-    with open('i8t') as f:
+    with open('inputs/i8t') as f:
         i = [' '.join([sub.rstrip() for sub in [split for split in line.split(' | ')]]) for line in f.readlines()]
     #print(solve_p1(i))
     print(solve_p2(i))

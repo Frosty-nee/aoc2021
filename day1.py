@@ -1,6 +1,6 @@
 #! python
 
-with open('i1') as t:
+with open('inputs/i1') as t:
     lines = [ int(l.rstrip()) for l in t.readlines()]
 
 

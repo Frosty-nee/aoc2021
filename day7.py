@@ -44,7 +44,7 @@ def solve_p2(clist):
     return min(options.values())
 
 if __name__ == '__main__':
-    with open('i7') as f:
+    with open('inputs/i7') as f:
         i = list(map(int, f.readline().split(',')))
     i.sort()
     print(solve_p1(i))
