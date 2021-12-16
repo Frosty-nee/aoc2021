@@ -2,59 +2,58 @@
 
 def process_input(i):
     caves = set()
-    for connection in i:
-        for cave in connection:
+    for item in i:
+        for cave in item:
             caves.add(cave)
-    caves = {cave:set() for cave in caves}
+
+
+    connections = {c:set() for c in caves if c != 'END'}
     for connection in i:
-        c1, c2 = connection
-        caves[c1].add(c2)
-        caves[c2].add(c1)
-    return caves
+        if 'END' in connection:
+            end = connection[connection.index('END')]
+            connection.remove('END')
+            other = connection[0]
+            connections[other].add(end)
+        elif 'START' in connection:
+            start = connection[connection.index('START')]
+            connection.remove('START')
+            other = connection[0]
+            connections[start].add(other)
+        else:
+            connections[connection[0]].add(connection[1])
+            connections[connection[1]].add(connection[0])
+    return connections
 
-def find_paths(connections, paths):
-    while True:
-        npaths = []
-        slen = len(paths)
+def generate_paths(conns, part, lower=None, paths=None, complete_paths=set()):
+    new_paths = set()
+    if paths == None:
+        lowers = [c for c in conns.keys() if c.islower()]
+        for conn in conns['START']:
+            new_paths.add('-'.join(['START', conn]))
+        for lower in lowers:
+            complete_paths = complete_paths.union(generate_paths(conns, part, lower, new_paths, complete_paths))
+        return complete_paths
+    else:
         for path in paths:
-            for connection in connections[path[-1]]:
-                if connection == 'START':
-                    continue
-                npath = path.copy()
-                npath.append(connection)
-                if is_valid(npath) and npath not in paths:
-                    npaths.append(npath)
-                elif npath[:-1] not in npaths:
-                    npaths.append(npath[:-1])
-        paths = npaths
-        if slen == len(paths):
-            break
-
-    return prune(npaths)
-
-def prune(paths):
-    valids = []
-    for path in paths:
-        if is_valid(path) and path[-1] == 'END':
-            valids.append(path)
-    return valids
-
-def is_valid(path):
-    for cave in set(path):
-        if path.count(cave) > 1 and cave.islower():
-            return False
-        if len(path) > 1 and path[-1] == 'START':
-            return False
-        if len(path) > 2 and path[-2] == 'END':
-            return False
-    return True
+            pl = path.split('-')
+            if pl[-1] == 'END':
+                complete_paths.add(path)
+            else:
+                for conn in conns[pl[-1]]:
+                    if conn.isupper() or (conn == lower and pl.count(conn) < part) or (pl.count(conn) < 1):
+                        step = '-'.join([path, conn])
+                        new_paths.add(step)
+        if len(paths) == 0:
+            return complete_paths
+        return generate_paths(conns, part, lower, new_paths, complete_paths)
 
 if __name__ == '__main__':
     with open('inputs/i12') as f:
         i = [line.rstrip().split('-') for line in f.readlines()]
-        for pos,conn in enumerate(i):
-            for pos2,cave in enumerate(conn):
-                if cave == 'start' or cave == 'end':
-                    i[pos][pos2] = cave.upper()
+    for pos,conn in enumerate(i):
+        for pos2,cave in enumerate(conn):
+            if cave == 'start' or cave == 'end':
+                i[pos][pos2] = cave.upper()
     connections = process_input(i)
-    print(len(find_paths(connections, [['START']])))
+    print(len(generate_paths(connections, 1)))
+    print(len(generate_paths(connections, 2)))
